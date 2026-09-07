@@ -4,11 +4,11 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Table(name = "subjects")
+@Table(name = "categories")
 @Getter @Setter
 @NoArgsConstructor @AllArgsConstructor
 @Builder
-public class Subject {
+public class Category {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -16,8 +16,4 @@ public class Subject {
 
     @Column(nullable = false, unique = true)
     private String name;
-    
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "category_id")
-    private Category category;
 }
