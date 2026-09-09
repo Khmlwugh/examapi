@@ -7,6 +7,7 @@ import dev.heygabo.examapi.dto.QuestionResponse;
 import dev.heygabo.examapi.entity.Choice;
 import dev.heygabo.examapi.entity.College;
 import dev.heygabo.examapi.entity.Question;
+import dev.heygabo.examapi.entity.QuestionImage;
 import dev.heygabo.examapi.entity.Subject;
 import dev.heygabo.examapi.entity.TextBlock;
 import dev.heygabo.examapi.repository.CollegeRepository;
@@ -112,13 +113,29 @@ public class QuestionService {
                 .position(c.getPosition())
                 .build())
             .toList();
-
         question.setChoices(choices);
 
-        Question saved = questionRepository.save(question);
+        List<QuestionImage> images = new ArrayList<>();
+        if (request.getImageUrls() != null) {
+            short position = 1;
+            for (String url : request.getImageUrls()) {
+                images.add(QuestionImage.builder()
+                    .question(question)
+                    .imageUrl(url)
+                    .position(position++)
+                    .build());
+            }
+        }
+        question.setImages(images);
+
+        Question saved = questionRepository.save(question); // cascade saves choices and images too
 
         List<ChoiceResponse> choiceResponses = saved.getChoices().stream()
             .map(c -> new ChoiceResponse(c.getId(), c.getChoiceText(), c.getPosition()))
+            .toList();
+
+        List<String> imageUrls = saved.getImages().stream()
+            .map(QuestionImage::getImageUrl)
             .toList();
 
         return new QuestionResponse(
@@ -128,6 +145,7 @@ public class QuestionService {
             saved.getExamPeriod(),
             saved.getQuestionText(),
             saved.getTextBlock() != null ? saved.getTextBlock().getContent() : null,
+            imageUrls,
             choiceResponses
         );
     }

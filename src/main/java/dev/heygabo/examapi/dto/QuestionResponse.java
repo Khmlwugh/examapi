@@ -13,5 +13,6 @@ public class QuestionResponse {
     private String examPeriod;
     private String questionText;
     private String textBlockContent;
+    private List<String> imageUrls;
     private List<ChoiceResponse> choices;
 }

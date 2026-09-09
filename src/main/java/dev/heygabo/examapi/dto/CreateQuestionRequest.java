@@ -19,11 +19,13 @@ public class CreateQuestionRequest {
     @NotNull(message = "Subject is required")
     private Long subjectId;
 
-    private Long textBlockId; // nullable — most questions won't have one
+    private Long textBlockId;
 
     @NotBlank(message = "Exam period is required")
     private String examPeriod;
 
+    private List<String> imageUrls;
+    
     @NotBlank(message = "Question text is required")
     private String questionText;
 
