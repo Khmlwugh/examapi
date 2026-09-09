@@ -17,8 +17,6 @@ import dev.heygabo.examapi.repository.TextBlockRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -36,7 +34,28 @@ public class QuestionService {
     private final SubjectRepository subjectRepository;
     private final TextBlockRepository textBlockRepository;
 
-    public Question getDailyQuestionForCategory(Long categoryId) {
+    private QuestionResponse toResponse(Question question) {
+        List<ChoiceResponse> choiceResponses = question.getChoices().stream()
+            .map(c -> new ChoiceResponse(c.getId(), c.getChoiceText(), c.getPosition()))
+            .toList();
+
+        List<String> imageUrls = question.getImages().stream()
+            .map(QuestionImage::getImageUrl)
+            .toList();
+
+        return new QuestionResponse(
+            question.getId(),
+            question.getCollege().getName(),
+            question.getSubject().getName(),
+            question.getExamPeriod(),
+            question.getQuestionText(),
+            question.getTextBlock() != null ? question.getTextBlock().getContent() : null,
+            imageUrls,
+            choiceResponses
+        );
+    }
+
+    public QuestionResponse getDailyQuestionForCategory(Long categoryId) {
         LocalDateTime startOfToday = LocalDate.now().atStartOfDay();
 
         List<Question> candidates =
@@ -54,11 +73,10 @@ public class QuestionService {
         Random seededRandom = new Random(seed);
         int index = seededRandom.nextInt(candidates.size());
 
-        return candidates.get(index);
+        return toResponse(candidates.get(index));
     }
 
-
-    public List<Question> getQuizQuestions(Long collegeId, Long subjectId, String examPeriod, int count) {
+    public List<QuestionResponse> getQuizQuestions(Long collegeId, Long subjectId, String examPeriod, int count) {
         List<Question> candidates =
             questionRepository.findByCollegeIdAndSubjectIdAndExamPeriod(collegeId, subjectId, examPeriod);
 
@@ -70,9 +88,11 @@ public class QuestionService {
         Collections.shuffle(shuffled);
 
         int actualCount = Math.min(count, shuffled.size());
-        return shuffled.subList(0, actualCount);
+        return shuffled.subList(0, actualCount).stream()
+            .map(this::toResponse)
+            .toList();
     }
-    
+
     public QuestionResponse createQuestion(CreateQuestionRequest request) {
 
         long correctCount = request.getChoices().stream()
@@ -130,23 +150,6 @@ public class QuestionService {
 
         Question saved = questionRepository.save(question); // cascade saves choices and images too
 
-        List<ChoiceResponse> choiceResponses = saved.getChoices().stream()
-            .map(c -> new ChoiceResponse(c.getId(), c.getChoiceText(), c.getPosition()))
-            .toList();
-
-        List<String> imageUrls = saved.getImages().stream()
-            .map(QuestionImage::getImageUrl)
-            .toList();
-
-        return new QuestionResponse(
-            saved.getId(),
-            saved.getCollege().getName(),
-            saved.getSubject().getName(),
-            saved.getExamPeriod(),
-            saved.getQuestionText(),
-            saved.getTextBlock() != null ? saved.getTextBlock().getContent() : null,
-            imageUrls,
-            choiceResponses
-        );
+        return toResponse(saved);
     }
 }
