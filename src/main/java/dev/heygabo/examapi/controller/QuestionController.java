@@ -32,9 +32,9 @@ public class QuestionController {
 
     @GetMapping("/quiz")
     public ResponseEntity<List<QuestionResponse>> getQuizQuestions(
-            @RequestParam Long collegeId,
-            @RequestParam Long subjectId,
-            @RequestParam String examPeriod,
+            @RequestParam(required=false) Long collegeId,
+            @RequestParam(required=false) Long subjectId,
+            @RequestParam(required=false) String examPeriod,
             @RequestParam(defaultValue = "4") int count) {
         return ResponseEntity.ok(questionService.getQuizQuestions(collegeId, subjectId, examPeriod, count));
     }

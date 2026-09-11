@@ -78,7 +78,7 @@ public class QuestionService {
 
     public List<QuestionResponse> getQuizQuestions(Long collegeId, Long subjectId, String examPeriod, int count) {
         List<Question> candidates =
-            questionRepository.findByCollegeIdAndSubjectIdAndExamPeriod(collegeId, subjectId, examPeriod);
+            questionRepository.findByOptionalFilters(collegeId, subjectId, examPeriod);
 
         if (candidates.isEmpty()) {
             throw new IllegalStateException("No questions found for the given filters");
