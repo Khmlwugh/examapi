@@ -1,5 +1,7 @@
 package dev.heygabo.examapi.controller;
 
+import dev.heygabo.examapi.dto.CheckAnswerRequest;
+import dev.heygabo.examapi.dto.CheckAnswerResponse;
 import dev.heygabo.examapi.dto.CreateQuestionRequest;
 import dev.heygabo.examapi.dto.QuestionResponse;
 import dev.heygabo.examapi.service.QuestionService;
@@ -37,5 +39,12 @@ public class QuestionController {
             @RequestParam(required=false) String examPeriod,
             @RequestParam(defaultValue = "4") int count) {
         return ResponseEntity.ok(questionService.getQuizQuestions(collegeId, subjectId, examPeriod, count));
+    }
+    
+    @PostMapping("/{questionId}/check-answer")
+    public ResponseEntity<CheckAnswerResponse> checkAnswer(
+            @PathVariable Long questionId,
+            @Valid @RequestBody CheckAnswerRequest request) {
+        return ResponseEntity.ok(questionService.checkAnswer(questionId, request.getChoiceId()));
     }
 }

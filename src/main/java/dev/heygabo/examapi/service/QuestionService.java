@@ -1,5 +1,6 @@
 package dev.heygabo.examapi.service;
 
+import dev.heygabo.examapi.dto.CheckAnswerResponse;
 import dev.heygabo.examapi.dto.ChoiceRequest;
 import dev.heygabo.examapi.dto.ChoiceResponse;
 import dev.heygabo.examapi.dto.CreateQuestionRequest;
@@ -151,5 +152,23 @@ public class QuestionService {
         Question saved = questionRepository.save(question); // cascade saves choices and images too
 
         return toResponse(saved);
+    }
+    
+    public CheckAnswerResponse checkAnswer(Long questionId, Long choiceId) {
+        Question question = questionRepository.findById(questionId)
+            .orElseThrow(() -> new IllegalStateException("Question not found: " + questionId));
+
+        Choice submittedChoice = question.getChoices().stream()
+            .filter(c -> c.getId().equals(choiceId))
+            .findFirst()
+            .orElseThrow(() -> new IllegalArgumentException("Choice " + choiceId + " does not belong to question " + questionId));
+
+        Long correctChoiceId = question.getChoices().stream()
+            .filter(Choice::getIsCorrect)
+            .findFirst()
+            .map(Choice::getId)
+            .orElseThrow(() -> new IllegalStateException("Question " + questionId + " has no correct choice configured"));
+
+        return new CheckAnswerResponse(submittedChoice.getIsCorrect(), correctChoiceId);
     }
 }
