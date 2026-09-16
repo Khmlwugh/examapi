@@ -47,4 +47,9 @@ public class QuestionController {
             @Valid @RequestBody CheckAnswerRequest request) {
         return ResponseEntity.ok(questionService.checkAnswer(questionId, request.getChoiceId()));
     }
+    
+    @GetMapping("/exam-periods")
+    public List<String> getExamPeriods() {
+        return questionService.getDistinctExamPeriods();
+    }
 }

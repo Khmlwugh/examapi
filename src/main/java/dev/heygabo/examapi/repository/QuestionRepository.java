@@ -26,4 +26,7 @@ public interface QuestionRepository extends JpaRepository<Question, Long> {
     List<Question> findBySubject_Category_Id(Long categoryId);
     
     List<Question> findBySubject_Category_IdAndCreatedAtBefore(Long categoryId, LocalDateTime cutoff);
+    
+    @Query("SELECT DISTINCT q.examPeriod FROM Question q ORDER BY q.examPeriod DESC")
+    List<String> findDistinctExamPeriods();
 }

@@ -171,4 +171,8 @@ public class QuestionService {
 
         return new CheckAnswerResponse(submittedChoice.getIsCorrect(), correctChoiceId);
     }
+    
+    public List<String> getDistinctExamPeriods() {
+        return questionRepository.findDistinctExamPeriods();
+    }
 }
