@@ -34,6 +34,9 @@ public class QuestionService {
     private final CollegeRepository collegeRepository;
     private final SubjectRepository subjectRepository;
     private final TextBlockRepository textBlockRepository;
+    
+    private static final int MAX_QUIZ_QUESTIONS = 10;
+
 
     private QuestionResponse toResponse(Question question) {
         List<ChoiceResponse> choiceResponses = question.getChoices().stream()
@@ -88,7 +91,7 @@ public class QuestionService {
         List<Question> shuffled = new ArrayList<>(candidates);
         Collections.shuffle(shuffled);
 
-        int actualCount = Math.min(count, shuffled.size());
+        int actualCount = Math.min(Math.min(count, MAX_QUIZ_QUESTIONS), shuffled.size());
         return shuffled.subList(0, actualCount).stream()
             .map(this::toResponse)
             .toList();
