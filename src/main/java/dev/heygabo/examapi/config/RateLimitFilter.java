@@ -1,8 +1,6 @@
 package dev.heygabo.examapi.config;
 
-import io.github.bucket4j.Bandwidth;
 import io.github.bucket4j.Bucket;
-import io.github.bucket4j.Refill;
 import jakarta.servlet.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -19,8 +17,9 @@ public class RateLimitFilter implements Filter {
     private final ConcurrentMap<String, Bucket> buckets = new ConcurrentHashMap<>();
 
     private Bucket newBucket() {
-        Bandwidth limit = Bandwidth.classic(60, Refill.greedy(60, Duration.ofMinutes(1)));
-        return Bucket.builder().addLimit(limit).build();
+        return Bucket.builder()
+            .addLimit(limit -> limit.capacity(60).refillGreedy(60, Duration.ofMinutes(1)))
+            .build();
     }
 
     @Override
