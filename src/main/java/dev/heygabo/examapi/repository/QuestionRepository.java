@@ -1,6 +1,9 @@
 package dev.heygabo.examapi.repository;
 
+import dev.heygabo.examapi.entity.College;
 import dev.heygabo.examapi.entity.Question;
+import dev.heygabo.examapi.entity.Subject;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -29,4 +32,10 @@ public interface QuestionRepository extends JpaRepository<Question, Long> {
     
     @Query("SELECT DISTINCT q.examPeriod FROM Question q ORDER BY q.examPeriod DESC")
     List<String> findDistinctExamPeriods();
+    
+    @Query("SELECT DISTINCT q.college FROM Question q ORDER BY q.college.name")
+    List<College> findCollegesWithQuestions();
+    
+    @Query("SELECT DISTINCT q.subject FROM Question q ORDER BY q.subject.name")
+    List<Subject> findSubjectsWithQuestions();
 }

@@ -1,7 +1,7 @@
 package dev.heygabo.examapi.service;
 
 import dev.heygabo.examapi.dto.CollegeResponse;
-import dev.heygabo.examapi.repository.CollegeRepository;
+import dev.heygabo.examapi.repository.QuestionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -11,10 +11,10 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CollegeService {
 
-    private final CollegeRepository collegeRepository;
+    private final QuestionRepository questionRepository;
 
     public List<CollegeResponse> getAllColleges() {
-        return collegeRepository.findAll().stream()
+        return questionRepository.findCollegesWithQuestions().stream()
             .map(c -> new CollegeResponse(c.getId(), c.getName()))
             .toList();
     }
