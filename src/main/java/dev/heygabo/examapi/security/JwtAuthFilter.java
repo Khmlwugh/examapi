@@ -26,8 +26,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         String authHeader = request.getHeader("Authorization");
 
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
-            String token = authHeader.substring(7); // strip "Bearer " prefix
-
+            String token = authHeader.substring(7); 
             if (jwtUtil.isTokenValid(token)) {
                 String username = jwtUtil.extractUsername(token);
 
@@ -38,6 +37,6 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             }
         }
 
-        filterChain.doFilter(request, response); // always continue — let SecurityConfig decide what's actually allowed
+        filterChain.doFilter(request, response);
     }
 }
