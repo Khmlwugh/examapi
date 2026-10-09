@@ -40,6 +40,6 @@ git pull
 docker compose up -d --build
 ```
 
-## Next up
+## Next up for the project
 
-Update/delete endpoints for questions (currently patched directly in the DB when needed), choice-level images (one known question needs it), automated tests, more transcribed content.
+Update/delete endpoints for questions (currently patched directly in the DB when needed),testing questions that require a textblock attached to them, automated tests, transcribing past years exams.
